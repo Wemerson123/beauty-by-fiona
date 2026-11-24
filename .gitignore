@@ -1,0 +1,7 @@
+node_modules/
+dist/
+# internal working material: her original photos, AI sources, earlier versions
+ref/
+gen/
+versoes/
+.DS_Store

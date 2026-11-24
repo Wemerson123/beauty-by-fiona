@@ -1,0 +1,194 @@
+/* The opening card: a photo card filling the first screen, 12px from the
+   window on every side. The card clips square and the four rounded corners are
+   painted over it in the page colour: with a rounded clip some browsers flash a
+   square corner each time a blurred photo swaps. */
+.hero { padding: var(--margem); overflow: clip; }
+.hero__card {
+  position: relative;
+  height: calc(100vh - var(--margem) * 2);
+  height: calc(100svh - var(--margem) * 2);
+  min-height: 600px;
+  overflow: hidden;
+  background: var(--hero-fundo);
+  color: #fff;
+  isolation: isolate;
+}
+.hero__card::after {
+  content: ''; position: absolute; inset: 0; z-index: 9; pointer-events: none;
+  --r: var(--raio); --c: var(--papel);
+  background:
+    radial-gradient(circle at 100% 100%, transparent calc(var(--r) - 0.6px), var(--c) var(--r)) top left / var(--r) var(--r) no-repeat,
+    radial-gradient(circle at 0 100%, transparent calc(var(--r) - 0.6px), var(--c) var(--r)) top right / var(--r) var(--r) no-repeat,
+    radial-gradient(circle at 100% 0, transparent calc(var(--r) - 0.6px), var(--c) var(--r)) bottom left / var(--r) var(--r) no-repeat,
+    radial-gradient(circle at 0 0, transparent calc(var(--r) - 0.6px), var(--c) var(--r)) bottom right / var(--r) var(--r) no-repeat;
+}
+
+.hero__fotos, .hero__foto, .hero__veu { position: absolute; inset: 0; }
+/* The photos stack among themselves only: each new one gets a higher z-index
+   (hero.js), and without its own stacking context it would climb over the
+   veil and the text after two swaps. */
+.hero__fotos { z-index: 0; isolation: isolate; }
+.hero__foto {
+  overflow: hidden;
+  opacity: 0; filter: blur(18px); transform: scale(1.05);
+  will-change: opacity, filter, transform;
+}
+.hero__foto img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 60% 40%); }
+.hero__foto.is-on {
+  opacity: 1; filter: blur(0); transform: none;
+  transition: opacity .75s var(--vai-volta), filter .9s var(--macio), transform 1.4s var(--macio);
+}
+/* The photo on screen keeps drifting very slowly, so the card is never still. */
+.hero__foto.is-on img { animation: deriva 9s cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+@keyframes deriva { from { transform: scale(1); } to { transform: scale(1.045); } }
+@media (prefers-reduced-motion: reduce) { .hero__foto.is-on img { animation: none; } }
+
+/* A flat veil in the theme colour: darkens the left (title), the foot and the
+   pill corner, so white text reads on any photo. */
+.hero__veu {
+  z-index: 2;
+  opacity: var(--veu, 1);
+  transition: opacity .9s var(--vai-volta);
+  background:
+    radial-gradient(58% 60% at 100% 100%, rgba(var(--hero-veu), 0.82) 0%, rgba(var(--hero-veu), 0.56) 36%, rgba(var(--hero-veu), 0.18) 70%, rgba(var(--hero-veu), 0) 100%),
+    linear-gradient(90deg, rgba(var(--hero-veu), 0.9) 0%, rgba(var(--hero-veu), 0.78) 30%, rgba(var(--hero-veu), 0.32) 52%, rgba(var(--hero-veu), 0) 68%),
+    linear-gradient(0deg, rgba(var(--hero-veu), 0.8) 0%, rgba(var(--hero-veu), 0.3) 16%, rgba(var(--hero-veu), 0) 34%),
+    linear-gradient(180deg, rgba(var(--hero-veu), 0.4) 0%, rgba(var(--hero-veu), 0) 18%);
+}
+
+/* Behind the title the photo falls softly out of focus, like depth of field,
+   so the words never fight the shelves. Desktop only. */
+.hero__veu::before {
+  content: ''; position: absolute; inset: 0;
+  -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px);
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 56%); mask-image: linear-gradient(90deg, #000 0%, #000 26%, transparent 56%);
+}
+@media (max-width: 760px) { .hero__veu::before { display: none; } }
+
+.hero__topo, .hero__texto, .hero__trat, .hero__pe { position: absolute; z-index: 3; }
+
+.hero__topo {
+  top: clamp(18px, 2.4vw, 30px); left: clamp(20px, 3.4vw, 48px); right: clamp(20px, 3.4vw, 48px);
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+
+.hero__texto {
+  left: clamp(20px, 3.4vw, 48px);
+  top: 46%; transform: translateY(-50%);
+  width: min(700px, 52%);
+}
+.hero__titulo {
+  font-family: var(--serif);
+  font-size: clamp(46px, 5.7vw, 88px);
+  line-height: 0.98;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  white-space: nowrap;
+}
+.hero__sub {
+  margin-top: clamp(18px, 2vw, 30px);
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 42ch;
+  text-wrap: pretty;
+}
+.hero__texto .btn { margin-top: clamp(24px, 2.6vw, 38px); }
+
+.hero__trat {
+  right: clamp(20px, 3.4vw, 48px);
+  bottom: clamp(78px, 6.8vw, 96px);
+  max-width: calc(100% - 40px);
+}
+.hero__pilulas { display: flex; gap: 6px; }
+.pilula {
+  height: 40px; padding: 0 17px; border-radius: 999px;
+  font-size: 14px; font-weight: 500; letter-spacing: 0; white-space: nowrap;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(var(--hero-veu), 0.28);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+  transition: background-color .4s var(--macio), color .4s var(--macio), box-shadow .4s var(--macio), transform .2s var(--macio);
+}
+.pilula[aria-selected='true'] { background: #fff; color: var(--tinta); box-shadow: none; }
+.pilula:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) {
+  .pilula:not([aria-selected='true']):hover { background: rgba(255, 255, 255, 0.2); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5); }
+}
+
+/* The line about the treatment on screen sits quietly in the foot row. */
+.hero__frase {
+  max-width: 62ch;
+  color: rgba(255, 255, 255, 0.86);
+  text-wrap: pretty;
+  transition: opacity .3s var(--macio), filter .3s var(--macio);
+}
+.hero__frase.is-troca { opacity: 0; filter: blur(6px); }
+
+.hero__pe {
+  left: clamp(20px, 3.4vw, 48px); right: clamp(20px, 3.4vw, 48px);
+  bottom: clamp(16px, 1.9vw, 24px);
+}
+.hero__linha { height: 1px; background: rgba(255, 255, 255, 0.26); position: relative; }
+.hero__linha span {
+  position: absolute; left: 0; top: -0.5px; height: 2px; width: 100%;
+  background: #fff; transform-origin: left; transform: scaleX(0);
+}
+.hero__pe-linha {
+  margin-top: 14px;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+  font-size: 13.5px; color: rgba(255, 255, 255, 0.78);
+}
+.hero__reg { text-align: right; }
+.hero__passo { display: flex; align-items: center; gap: 18px; font-variant-numeric: tabular-nums; }
+.hero__passo span { color: #fff; min-width: 5.4ch; text-align: center; }
+.hero__passo button { padding: 6px 2px; color: rgba(255, 255, 255, 0.78); transition: color .25s var(--macio); }
+@media (hover: hover) and (pointer: fine) { .hero__passo button:hover { color: #fff; } }
+
+/* Shorter desktop windows: pull the block up a little and tighten. */
+@media (min-width: 761px) and (max-height: 760px) {
+  .hero__texto { top: 44%; }
+  .hero__titulo { font-size: clamp(40px, 4.8vw, 68px); }
+  .hero__sub { margin-top: 14px; }
+  .hero__texto .btn { margin-top: 20px; }
+}
+@media (min-width: 761px) and (max-width: 1180px) {
+  .hero__texto { width: min(600px, 62%); }
+  .pilula { padding: 0 14px; font-size: 13.5px; height: 38px; }
+  .hero__reg { display: none; }
+  .hero__pe-linha { grid-template-columns: 1fr auto; }
+}
+
+/* ---------- phone: photo on top, fading into the card colour; text below ---------- */
+@media (max-width: 760px) {
+  .hero__card { height: auto; min-height: calc(100svh - var(--margem) * 2); display: flex; flex-direction: column; }
+  .hero__fotos, .hero__veu { inset: 0 0 auto 0; height: min(54svh, 116vw); }
+  .hero__veu { height: calc(min(54svh, 116vw) + 2px); }
+  .hero__foto img { object-position: var(--pos-m, 50% 30%); }
+  .hero__veu {
+    background:
+      linear-gradient(0deg, rgb(var(--hero-veu)) 0%, rgba(var(--hero-veu), 0.7) 22%, rgba(var(--hero-veu), 0) 56%),
+      linear-gradient(180deg, rgba(var(--hero-veu), 0.5) 0%, rgba(var(--hero-veu), 0) 26%);
+  }
+  .hero__topo { top: 14px; left: 16px; right: 16px; }
+  .hero__topo .btn { height: 40px; padding-inline: 16px; font-size: 14px; }
+  .marca__nome { font-size: 16px; }
+  .hero__texto, .hero__trat, .hero__pe { position: relative; inset: auto; transform: none; width: auto; max-width: none; }
+  .hero__texto { margin-top: calc(min(54svh, 116vw) - 64px); padding: 0 18px; }
+  .hero__titulo { font-size: clamp(38px, 10.6vw, 48px); white-space: normal; text-wrap: balance; }
+  .hero__titulo br { display: none; }
+  .hero__sub { font-size: 16px; margin-top: 14px; }
+  .hero__texto .btn { margin-top: 20px; }
+  .hero__trat { margin-top: 26px; align-items: stretch; }
+  .hero__pilulas {
+    overflow-x: auto; overflow-y: hidden; scrollbar-width: none; overscroll-behavior-x: contain;
+    padding: 2px 44px 2px 18px; scroll-padding-inline: 18px;
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent);
+  }
+  .hero__pilulas::-webkit-scrollbar { display: none; }
+  .pilula { flex: none; background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .hero__pe { margin-top: auto; padding: 22px 18px 18px; }
+  .hero__pe-linha { grid-template-columns: 1fr; gap: 6px; }
+  .hero__frase, .hero__reg { display: none; }
+  .hero__passo { justify-content: space-between; }
+}

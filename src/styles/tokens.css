@@ -1,0 +1,59 @@
+/* Colours are named by role, never by hue. Ivory paper, coffee ink and sand
+   panels carry the page; the accent is a quiet mauve drawn from Fiona's
+   butterfly and is kept for small details (white text on it passes AA). */
+@property --s {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+
+@property --p {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+:root {
+  --papel: #fbf9f5;
+  --gelo: #f3efe8;
+  --gelo-2: #e8e1d6;
+  --areia: #d6cbba;
+  --cafe: #26201c;
+  --tinta: #1f1a17;
+  --tinta-2: #655d56;
+  --tinta-3: #7c736a;
+  --linha: rgba(31, 26, 23, 0.13);
+
+  --acento: #8a5a73;
+  --acento-forte: #6f465c;
+  --acento-claro: #e9cdd9;
+  --acento-suave: #efe6ea;
+  --marca: #ce70aa;
+
+  --hero-fundo: #1d1815;
+  --hero-veu: 29, 24, 21;
+
+  --sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --assina: 'Mrs Saint Delafield', 'Snell Roundhand', cursive;
+
+  --macio: cubic-bezier(0.22, 1, 0.36, 1);
+  --vai-volta: cubic-bezier(0.65, 0, 0.35, 1);
+  --sai: cubic-bezier(0.4, 0, 1, 1);
+
+  --margem: 12px;
+  --raio: 10px;
+  --raio-m: 8px;
+  --raio-p: 6px;
+  --borda: clamp(20px, 4.4vw, 64px);
+  --largura: 1320px;
+  --respiro: clamp(96px, 12vw, 188px);
+}
+
+@media (max-width: 760px) {
+  :root {
+    --margem: 8px;
+    --raio: 8px;
+    --raio-m: 6px;
+  }
+}

@@ -1,0 +1,362 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--papel);
+  scroll-padding-top: 24px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--tinta);
+  background: var(--papel);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+h1, h2, h3, p, figure, blockquote, dl, dd { margin: 0; }
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+svg { display: block; }
+
+:focus-visible {
+  outline: 2px solid var(--acento);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.hero :focus-visible { outline-color: #fff; }
+
+::selection { background: var(--acento); color: #fff; }
+
+/* The native scrollbar takes width on desktop and would unbalance the 12px
+   margin around the hero card, so it is hidden there and a thin one of our own
+   floats over the page (motion/scrollbar.js). Touch keeps the device's bar. */
+@media (hover: hover) and (pointer: fine) {
+  html.js { scrollbar-width: none; }
+  html.js::-webkit-scrollbar { display: none; }
+}
+
+.pular {
+  position: fixed; left: 16px; top: 16px; z-index: 200;
+  padding: 10px 16px; border-radius: 999px;
+  background: var(--tinta); color: #fff; font-size: 14px;
+  transform: translateY(-200%);
+}
+.pular:focus { transform: none; }
+
+/* ---------- layout ---------- */
+.caixa {
+  width: 100%;
+  max-width: calc(var(--largura) + var(--borda) * 2);
+  margin-inline: auto;
+  padding-inline: var(--borda);
+}
+.secao { padding-block: var(--respiro); }
+.painel {
+  margin-inline: var(--margem);
+  background: var(--gelo);
+  border-radius: var(--raio);
+  padding-block: clamp(56px, 7vw, 104px);
+}
+.painel .caixa { padding-inline: calc(var(--borda) - var(--margem)); }
+
+/* Section label: its number, a hairline, its name. The number comes from a
+   counter, so the labels stay in sequence whatever sections are on the page. */
+body { counter-reset: secao; }
+.etiqueta {
+  counter-increment: secao;
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 11.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--tinta-2);
+  width: max-content;
+}
+.etiqueta::before { content: counter(secao, decimal-leading-zero); order: -2; color: var(--tinta); font-variant-numeric: tabular-nums; }
+.etiqueta::after { content: ''; order: -1; width: 28px; height: 1px; background: var(--tinta); opacity: 0.45; }
+
+.titulo {
+  font-family: var(--serif);
+  font-size: clamp(38px, 4.9vw, 72px);
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+}
+.titulo em, .hero__titulo em { font-style: italic; }
+@media (max-width: 900px) { .so-largo { display: none; } }
+.titulo--g { font-size: clamp(42px, 6vw, 92px); letter-spacing: -0.025em; }
+
+.texto {
+  font-size: clamp(16px, 1.25vw, 18px);
+  line-height: 1.55;
+  color: var(--tinta-2);
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+/* ---------- brand mark: Fiona's own butterfly, used as a mask so it tints ---------- */
+.marca { display: inline-flex; align-items: center; gap: 10px; color: #fff; }
+.marca__simbolo {
+  width: 34px; height: 23px; flex: none;
+  background: currentColor;
+  -webkit-mask: url('/marca.png') center / contain no-repeat;
+  mask: url('/marca.png') center / contain no-repeat;
+}
+.marca__nome { font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: -0.01em; white-space: nowrap; line-height: 1; }
+.marca--tinta { color: var(--tinta); }
+.marca--tinta .marca__simbolo { background: var(--marca); }
+
+/* ---------- buttons: ink on ivory, ivory on ink, never a coloured fill ---------- */
+.btn {
+  --btn-fundo: #fff; --btn-tinta: var(--tinta); --btn-seta: var(--tinta); --btn-seta-tinta: #fff;
+  display: inline-flex; align-items: center; gap: 16px;
+  height: 54px; padding: 0 7px 0 26px;
+  border-radius: 999px;
+  background: var(--btn-fundo); color: var(--btn-tinta);
+  font-size: 15.5px; font-weight: 500; letter-spacing: 0;
+  white-space: nowrap;
+  transition: background-color .4s var(--macio), color .4s var(--macio), transform .2s var(--macio), border-color .4s var(--macio);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:not(:has(.btn__seta)) { padding-inline: 26px; }
+.btn--p { height: 44px; font-size: 14.5px; }
+.btn--p:not(:has(.btn__seta)) { padding-inline: 20px; }
+.btn:active { transform: scale(0.97); }
+.btn__seta {
+  position: relative; overflow: hidden; flex: none;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--btn-seta); color: var(--btn-seta-tinta);
+  transition: background-color .4s var(--macio), color .4s var(--macio);
+}
+.btn__seta svg {
+  position: absolute; inset: 0; margin: auto; width: 15px; height: 15px;
+  fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .5s var(--macio);
+}
+.btn__seta svg:last-child { transform: translateX(-40px); }
+
+.btn--acento { --btn-fundo: var(--tinta); --btn-tinta: var(--papel); --btn-seta: var(--papel); --btn-seta-tinta: var(--tinta); }
+.btn--linha { --btn-fundo: transparent; border: 1px solid var(--linha); }
+.btn--vidro { --btn-fundo: rgba(var(--hero-veu), 0.24); --btn-tinta: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.34); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover .btn__seta svg:first-child { transform: translateX(40px); }
+  .btn:hover .btn__seta svg:last-child { transform: none; }
+  .btn--branco:hover { --btn-fundo: var(--gelo); }
+  .btn--acento:hover { --btn-fundo: #3a312b; }
+  .btn--linha:hover { border-color: var(--tinta); }
+  .btn--vidro:hover { --btn-fundo: #fff; --btn-tinta: var(--tinta); }
+}
+
+/* ---------- arrows ---------- */
+.setas { display: flex; gap: 8px; }
+.seta {
+  width: 56px; height: 44px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: transparent; color: var(--tinta);
+  border: 1px solid var(--linha);
+  transition: background-color .3s var(--macio), color .3s var(--macio), opacity .3s var(--macio), transform .2s var(--macio);
+}
+.seta svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .35s var(--macio); }
+.seta--acento { background: var(--tinta); color: var(--papel); border-color: transparent; }
+.seta:active { transform: scale(0.95); }
+.seta[disabled] { opacity: 0.35; cursor: default; }
+@media (hover: hover) and (pointer: fine) {
+  .seta:not([disabled]):hover { background: var(--tinta); color: var(--papel); border-color: transparent; }
+  .seta--acento:not([disabled]):hover { background: #3a312b; }
+  [data-trilho-ant]:not([disabled]):hover svg, [data-depo-ant]:hover svg { transform: translateX(-3px); }
+  [data-trilho-prox]:not([disabled]):hover svg, [data-depo-prox]:hover svg { transform: translateX(3px); }
+}
+
+/* ---------- entrance in focus: the only way anything enters ---------- */
+.js [data-foco] {
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(26px);
+  will-change: opacity, filter, transform;
+}
+.js.assentou [data-foco] {
+  transition:
+    opacity .75s var(--macio) calc(var(--i, 0) * 85ms),
+    filter .9s var(--macio) calc(var(--i, 0) * 85ms),
+    transform 1.05s var(--macio) calc(var(--i, 0) * 85ms);
+}
+.js [data-foco].is-foco { opacity: 1; filter: blur(0); transform: none; }
+
+/* ---------- the sentence that reads itself ---------- */
+.frase {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.9vw, 56px);
+  line-height: 1.1;
+  font-weight: 400;
+  letter-spacing: -0.018em;
+}
+.js [data-varredura] { --apagada: rgba(31, 26, 23, 0.18); --lida: var(--tinta); --ponta: var(--acento); }
+.js [data-varredura-claro] { --apagada: rgba(255, 255, 255, 0.32); --lida: #fff; --ponta: var(--acento-claro); }
+.js [data-varredura]:not(.is-pronta) { color: var(--apagada); }
+.vl {
+  display: block; white-space: nowrap;
+  --p: 0%;
+  color: transparent;
+  background: linear-gradient(90deg, var(--lida) calc(var(--p) - 9%), var(--ponta) calc(var(--p) - 9%), var(--ponta) var(--p), var(--apagada) var(--p));
+  -webkit-background-clip: text; background-clip: text;
+  padding-block: 0.08em; margin-block: -0.08em;
+}
+.vl.is-lendo { transition: --p .9s linear; --p: 109%; }
+/* Once read, a line is plain solid text again: the gradient only exists
+   while the ink is passing. */
+.vl.is-lida { color: var(--lida); background: none; -webkit-background-clip: border-box; background-clip: border-box; transition: none; }
+
+.assinatura {
+  margin-top: clamp(20px, 2.6vw, 40px);
+  font-family: var(--assina);
+  font-size: clamp(64px, 7.4vw, 112px);
+  line-height: 0.9;
+  color: var(--acento);
+  width: max-content;
+}
+.assinatura span { display: block; padding: 0.12em 0.2em 0.2em 0.04em; }
+.js .assinatura span { clip-path: inset(0 100% 0 0); }
+.js .assinatura.is-on span { clip-path: inset(0 0 0 0); transition: clip-path 1.5s var(--vai-volta); }
+
+/* ---------- sticky bar ---------- */
+.barra {
+  position: fixed; top: 14px; left: 50%; z-index: 60;
+  display: flex; align-items: center; gap: 28px;
+  padding: 7px 7px 7px 20px;
+  background: rgba(251, 249, 245, 0.92);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2);
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(31, 26, 23, 0.06), 0 14px 40px -16px rgba(31, 26, 23, 0.2);
+  transform: translate(-50%, -140%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform .55s var(--macio), opacity .35s var(--macio), visibility 0s .55s;
+}
+.barra.is-on { transform: translate(-50%, 0); opacity: 1; visibility: visible; transition: transform .55s var(--macio), opacity .35s var(--macio), visibility 0s; }
+.barra__links { display: flex; gap: 4px; }
+.barra__links a {
+  padding: 8px 14px; border-radius: 999px; font-size: 14.5px; color: var(--tinta-2);
+  transition: color .25s var(--macio), background-color .25s var(--macio);
+  white-space: nowrap;
+}
+.barra__links a.is-aqui { color: var(--tinta); background: var(--gelo); }
+@media (hover: hover) and (pointer: fine) { .barra__links a:hover { color: var(--tinta); } }
+@media (max-width: 900px) {
+  .barra { gap: 16px; padding-left: 16px; }
+  .barra__links { display: none; }
+}
+
+/* ---------- our own scrollbar ---------- */
+.rolagem { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .js .rolagem {
+    display: block; position: fixed; top: 0; right: 0; bottom: 0; width: 14px; z-index: 90;
+    opacity: 0; transition: opacity .4s var(--macio);
+  }
+  .js .rolagem.is-on, .js .rolagem:hover, .js .rolagem.is-arrasta { opacity: 1; }
+  /* The span is the grab area (moved by JS with translateY); the visible
+     thread is its ::after, which thickens with a scale, never with width. */
+  .rolagem span {
+    position: absolute; right: 3px; top: 0; width: 8px; min-height: 36px;
+    cursor: grab;
+  }
+  .rolagem span::after {
+    content: ''; position: absolute; inset: 0; border-radius: 99px;
+    background: rgba(27, 20, 23, 0.42);
+    transform: scaleX(0.375); transform-origin: right;
+    transition: transform .2s var(--macio), background-color .2s var(--macio);
+  }
+  .rolagem:hover span::after, .rolagem.is-arrasta span::after { transform: none; background: rgba(27, 20, 23, 0.6); }
+}
+
+/* ---------- reading sheet ---------- */
+.folha {
+  border: 0; padding: 0; background: transparent; color: var(--tinta);
+  width: min(760px, 100vw - 32px); max-width: none; max-height: none;
+  height: min(88vh, 900px);
+  margin: auto; overflow: visible;
+}
+.folha::backdrop {
+  background: rgba(27, 20, 23, 0);
+  -webkit-backdrop-filter: blur(0); backdrop-filter: blur(0);
+  transition: background-color .5s var(--macio), backdrop-filter .5s var(--macio), -webkit-backdrop-filter .5s var(--macio);
+}
+.folha.is-on::backdrop { background: rgba(27, 20, 23, 0.42); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.folha__papel {
+  position: relative; height: 100%;
+  display: flex; flex-direction: column;
+  background: var(--papel); border-radius: var(--raio);
+  box-shadow: 0 40px 100px -30px rgba(27, 20, 23, 0.5);
+  opacity: 0; filter: blur(14px); transform: translateY(36px);
+  transition: opacity .45s var(--macio), filter .6s var(--macio), transform .7s var(--macio);
+  overflow: hidden;
+}
+.folha.is-on .folha__papel { opacity: 1; filter: blur(0); transform: none; }
+.folha__fechar {
+  position: absolute; top: 16px; right: 16px; z-index: 2;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--gelo); transition: background-color .25s var(--macio), color .25s var(--macio), transform .2s var(--macio);
+}
+.folha__fechar svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.folha__fechar:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) { .folha__fechar:hover { background: var(--tinta); color: #fff; } }
+.folha__corpo {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  -webkit-mask-image: linear-gradient(#000 calc(100% - 36px), transparent); mask-image: linear-gradient(#000 calc(100% - 36px), transparent);
+  padding: clamp(56px, 7vw, 76px) clamp(24px, 6vw, 72px) 40px;
+}
+.folha__tema { font-size: 11.5px; font-weight: 500; color: var(--tinta-2); letter-spacing: 0.16em; text-transform: uppercase; margin-bottom: 20px; }
+.folha__corpo h2 { font-family: var(--serif); font-size: clamp(34px, 4.2vw, 52px); line-height: 1.02; font-weight: 400; letter-spacing: -0.02em; text-wrap: balance; margin-bottom: 22px; }
+.folha__abre { font-size: clamp(19px, 2vw, 23px); line-height: 1.38; letter-spacing: -0.015em; color: var(--tinta); margin-bottom: 8px; }
+.folha__corpo h3 { font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: -0.01em; margin: 34px 0 8px; }
+.folha__corpo p:not(.folha__tema):not(.folha__abre) { font-size: 17px; line-height: 1.6; color: var(--tinta-2); max-width: 58ch; }
+.folha__corpo p + p { margin-top: 12px; }
+.folha__fim { padding: 20px clamp(24px, 6vw, 72px) clamp(24px, 4vw, 36px); border-top: 1px solid var(--linha); }
+@media (max-width: 760px) {
+  .folha { width: 100vw; height: 90dvh; margin: auto 0 0; }
+  .folha__papel { border-radius: var(--raio) var(--raio) 0 0; transform: translateY(100%); filter: none; }
+}
+html.folha-aberta { overflow: hidden; }
+
+/* ---------- reduced motion: no entrances, sentences already read ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-foco] { opacity: 1; filter: none; transform: none; transition: none !important; }
+  .js [data-varredura]:not(.is-pronta) { color: inherit; }
+  .js .assinatura span { clip-path: none; }
+  .vl { --p: 109%; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* ---------- photo grade: the studio photos were shot cool and bright; a touch
+   of warmth sets them beside the still lifes and the ivory page ---------- */
+img[src*="about-"], img[src*="visit-room"], img[src*="why-fiona"], img[src*="fiona-face"], img[src*="hero-facials"] {
+  filter: saturate(0.93) sepia(0.09) contrast(1.02);
+}
+
+/* ---------- the "Drag" badge that follows the mouse over the card row ---------- */
+.cursor-arrasta { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .cursor-arrasta {
+    display: grid; place-items: center;
+    position: fixed; left: 0; top: 0; z-index: 80; pointer-events: none;
+    width: 78px; height: 78px; border-radius: 50%;
+    background: rgba(251, 249, 245, 0.92); color: var(--tinta);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px -12px rgba(31, 26, 23, 0.35);
+    font-size: 10.5px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+    opacity: 0; --s: 0.4;
+    transition: opacity .35s var(--macio), --s .45s var(--macio);
+  }
+  .cursor-arrasta.is-on { opacity: 1; --s: 1; }
+  .cursor-arrasta.is-preso { --s: 0.78; }
+  .trilho.tem-cursor, .trilho.tem-cursor.is-arrasta { cursor: none; }
+}
